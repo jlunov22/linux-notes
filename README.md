@@ -10,6 +10,12 @@ Quick note to Arch Linux Disotro
 
 ## Issues:
 
+### DBeaver JDK Version 17+ 
+
+"archlinux-java status"
+
+"# archlinux-java set <JAVA_ENV_NAME>"
+
 ### USB HDD has No Write Access
 
  -Environment: KDE(Plasma) 
