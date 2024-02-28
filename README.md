@@ -10,6 +10,11 @@ Quick note to Arch Linux Disotro
 
 ## Issues:
 
+### Ambient Sensor not working
+
+'https://github.com/mikhail-m1/illuminanced'
+
+
 ### DBeaver JDK Version 17+ 
 
 "archlinux-java status"
