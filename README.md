@@ -10,6 +10,13 @@ Quick note to Arch Linux Disotro
 
 ## Issues:
 
+### Boot Loader Alert
+⚠️ Mount point '/boot' which backs the random seed file is world accessible, which is a security hole! ⚠️
+⚠️ Random seed file '/boot/loader/.#bootctlrandom-seed25**************' is world accessible, which is a security hole! ⚠️
+
+Solution: Change /etc/fstab /boot (/EFI) fmask=0077, dmask=0077 
+
+
 ### Ambient Sensor not working
 
 'https://github.com/mikhail-m1/illuminanced'
