@@ -1,8 +1,27 @@
 # Arch-install-note
-
-Quick note to Arch Linux Disotro
+Installing Arch Linux with Btrfs, systemd-boot and KDE
 
 ----
+
+## Using SSH (optional)
+
+Start SSH:
+
+ # systemctl start sshd.service
+
+Set a password for root:
+
+> # passwd
+
+Look up the IP address:
+
+> # ip addr show
+
+Connect via SSH:
+
+' # ssh root@<YOUR.IP.ADDRESS> '
+
+
 
 ## Installation
 
