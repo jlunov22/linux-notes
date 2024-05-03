@@ -139,6 +139,22 @@ Get PARTUUID of ROOT partation
 ``# blkid -s PARTUUID -o value /dev/sda2``
 
 
+Type ``exit`` to exit chroot
+
+``# umount -R /mnt/`` to unmount all volumes
+
+Now its time to reboot into the new system
+
+## Create New User
+```
+# useradd -m -g users -G wheel,power,audio,video -s /usr/bin/zsh MYUSERNAME
+passwd MYUSERNAME
+```
+
+Setup sudo
+
+``# export EDITOR=nvim visudo``
+Uncommend ``%wheel ALL=(ALL:ALL) ALL``
 
 Install Aur
 ```
