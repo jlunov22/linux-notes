@@ -1,12 +1,20 @@
 # linux-notes
-Anything related to Linux 
 
-Kinda sad, MS decided to fit all our data to its AI. Think of abandon this place which just started few moment ago.
+Personal notes and journal for Linux setup, fixes, and issues encountered along the way.
 
-A journal sytle note for any my project and the issues encounter. 
+## Index
 
-01-28-2026 [Issue] KDe de freeze right after login. 
-Reference link: https://github.com/rockowitz/ddcutil/issues/581
-Temporaty solution: [Jst4NE] adding kernel parameter amdgpu.dcdebugmask=0x10
-Solution: issue related to ddcutil lib, update to newer version; reoslved at the next version  
+- [fcitx5 install notes](fcitx5-install-note.md)
+- [Arknights on Linux](Game/Arknights-On-Linux.md)
+- [KVM — Bliss14 setup](kvm/bliss14/README.MD)
 
+## Journal
+
+Dated log of issues and how they were resolved.
+
+### 2026-01-28 — KDE freezes right after login
+
+- **Issue:** KDE freezes right after login.
+- **Reference:** [ddcutil#581](https://github.com/rockowitz/ddcutil/issues/581)
+- **Temporary workaround:** add kernel parameter `amdgpu.dcdebugmask=0x10`
+- **Fix:** caused by the `ddcutil` library; resolved in a newer release — update `ddcutil`.
