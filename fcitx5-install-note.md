@@ -1,40 +1,46 @@
-Last update: 02-16-2026
+# fcitx5 Install Notes
 
-package needed fcitx5-im fcitx5-rime
+KDE Plasma input method setup. Last updated 2026-02-16.
 
-[de] kde plasma 
+## Packages
 
-Add rime from system settings > input method > [add] rime
+```
+fcitx5-im fcitx5-rime
+```
 
-for kwin (Wayland) 
-No need add env 
+## Add Rime
 
-for X11
+System Settings → Input Method → [add] Rime.
 
-``
-    TK_IM_MODULE=fcitx
-    QT_IM_MODULE=fcitx
-    XMODIFIERS=@im=fcitx
-``
+## Environment variables (X11 only)
 
-Extra
+Not needed under KWin/Wayland.
 
-add boshiamy with lua 
+```
+GTK_IM_MODULE=fcitx
+QT_IM_MODULE=fcitx
+XMODIFIERS=@im=fcitx
+```
 
-need plum 
+## Add Boshiamy (Lua)
 
-$ git clone https://github.com/rime/plum.git 
+Requires `plum`:
 
-generate boshiamy
+```
+git clone https://github.com/rime/plum.git
+```
 
-`
-$ rime_frontend=fcitx5-rime rime-install https://raw.githubusercontent.com/hftsai256/rime-liur-lua/master/liur-lua-packages.conf
-`
-altered config with other input methods
+Generate Boshiamy:
 
+```
+rime_frontend=fcitx5-rime rime-install https://raw.githubusercontent.com/hftsai256/rime-liur-lua/master/liur-lua-packages.conf
+```
 
-``
-cat ~/.local/share/fcitx5/rime/default.custom.yaml
+## Custom schema config
+
+To use alongside other input methods, edit `~/.local/share/fcitx5/rime/default.custom.yaml`:
+
+```yaml
 __patch:
 # Rx: hftsai256/rime-liur-lua:install: {
   - patch/+:
@@ -49,8 +55,8 @@ __patch:
       - { accept: "Control+apostrophe", toggle: liu_w2c, when: always }    # 顯示同音字 (Show homophones - Liu only)
       - { accept: "Control+slash", toggle: extended_charset, when: always} # 擴展字集
       - { accept: "Shift+space", toggle: full_shape, when: always}         # 全半形切換
+```
 
-``
+## Reference
 
-
-[Ref] https://www.ptt.cc/bbs/Linux/M.1614454898.A.F8D.html
+[ptt.cc thread](https://www.ptt.cc/bbs/Linux/M.1614454898.A.F8D.html)

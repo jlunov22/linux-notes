@@ -1,24 +1,14 @@
+# Arknights on Linux
 
-After failed into different route, finally got a smooth run.
+DE: KDE Plasma, CPU: Intel i7. After a few failed routes, this is the one that worked.
 
-DE: KDE Plasma
-CPU: intel i7
-
-#1. Install Waydroid 
-sudo pacman -S waydroid
-
-#2. DO NOT USE the arm translastion layer it's very glitch
-
-#3. Install Aurora Store 
-
-I got the version 4.8.1
-
-https://auroraoss.com/files
-
--Install and grant required permissions
-
--Change **Settings > Spoof Settings > Google Play Games on PC**
-
-#4. Now you can download the Arknights without issue.
-
-#5. Enjoy it! 
+1. Install Waydroid:
+   ```
+   sudo pacman -S waydroid
+   ```
+2. Do **not** use the ARM translation layer — very glitchy.
+3. Install [Aurora Store](https://auroraoss.com/files) (tested with v4.8.1).
+   - Install it and grant the required permissions.
+   - Change **Settings → Spoof Settings → Google Play Games on PC**.
+4. Download Arknights through Aurora Store — no issues from here.
+5. Enjoy!
