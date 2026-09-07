@@ -1,5 +1,16 @@
 # Arch-install-note
-Installing Arch Linux with Btrfs, systemd-boot and KDE
+Cheat sheet for installing Arch Linux with Btrfs and KDE. Pick the options that match the machine before starting.
+
+----
+
+## Options
+
+| Step | Choices |
+|---|---|
+| Bootloader | **systemd-boot** (simple, UEFI-native) or **GRUB** (needed for Secure Boot / separate ext4 `/boot`) |
+| `/boot` filesystem | **FAT32 only** (default) or **separate ext4** (GRUB only, Fedora-style) |
+| Secure Boot | **Skip** or **enable** via `sbctl` (GRUB only) |
+| Disk encryption | **None** or **LUKS** or **LUKS + TPM2 auto-unlock** (needs TPM2 hardware) |
 
 ----
 
@@ -30,7 +41,7 @@ lsblk-f
 
 ```
 
-### Partition 
+### Partition
 
 # gdisk /dev/sda
 
@@ -38,6 +49,8 @@ lsblk-f
 |---|---|---|---|
 | BOOT | 1GB | EF00 | EFI system partition |
 | ROOT | Rest | 8300 | Linux File System |
+
+> If using a separate ext4 `/boot`, add a third partition between EFI and ROOT: `BOOT` 1GB, code `8300`.
 
 ```
 Create new GPT:
@@ -61,13 +74,21 @@ Write the new partitions to disk:
 Command (? for help): w
 ```
 
-### Format 
+### Format
 
 FAT32 Label: EFI
 ``# mkfs.vfat -F32 -n EFI /dev/sda1``
 
+> If using a separate ext4 `/boot`: ``# mkfs.ext4 -L BOOT /dev/sda2`` (ROOT becomes `/dev/sda3` in every step below instead of `/dev/sda2`)
+
+> If using LUKS, encrypt the ROOT partition first, then use `/dev/mapper/cryptroot` in place of `/dev/sda2` in every step below:
+> ```
+> # cryptsetup luksFormat /dev/sda2
+> # cryptsetup open /dev/sda2 cryptroot
+> ```
+
 Btrfs Label: ROOT
-``# mkfs.btrfs -L ROOT /dev/mapper/luks``
+``# mkfs.btrfs -L ROOT /dev/sda2``
 
 ### Create, Mount and Sub Volumes
 
@@ -93,6 +114,8 @@ Mount sub volumes
 # mount -o noatime,nodiratime,compress=zstd,subvol=@.snapshots /dev/sda2 /mnt/var/.snapshots
 # mount -o noatime,nodiratime,compress=zstd,subvol=@swap /dev/swap
 ```
+
+> If using a separate ext4 `/boot`: `# mount /dev/sda2 /mnt/boot` then `# mkdir -p /mnt/boot/efi && mount /dev/sda1 /mnt/boot/efi` (EFI is mounted at `/mnt/boot` directly otherwise, via `genfstab` below).
 
 Install essential packages
 ``# pacstrap -K /mnt base linux linux-firmware``
@@ -121,9 +144,14 @@ Edit /etc/locale.gen and uncomment en_US.UTF-8 UTF-8
 Add btrfs to Initramfs
 ``MOUDLES=(btrfs)``
 
+> If using LUKS, also add `encrypt` to `HOOKS=(...)` in `/etc/mkinitcpio.conf`, before `filesystems`.
+
 ``# mkinitcpio -P``
 
-## Boot Manager
+----
+
+## Boot Manager — Option A: systemd-boot
+
 Install systemd-boot
 ``# bootctl install``
 
@@ -138,12 +166,54 @@ options root=PARTUUID=<PARTUUID-OF-ROOT-PARTITION> rootflags=subvol=@ rw rootfs=
 Get PARTUUID of ROOT partation
 ``# blkid -s PARTUUID -o value /dev/sda2``
 
+> If using LUKS, replace `root=PARTUUID=...` with `rd.luks.name=<LUKS-UUID>=cryptroot root=/dev/mapper/cryptroot`, and get the LUKS UUID with ``# blkid -s UUID -o value /dev/sda2``.
+
+## Boot Manager — Option B: GRUB + Secure Boot
+
+### Install GRUB
+
+```
+# pacstrap -K /mnt grub efibootmgr sbctl
+# arch-chroot /mnt
+# grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+# grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+> `--efi-directory=/boot` assumes the default FAT32-only layout. If using a separate ext4 `/boot`, use `--efi-directory=/boot/efi` instead.
+
+### Secure Boot with sbctl (optional)
+
+Enable "Setup Mode" for Secure Boot in firmware first.
+
+```
+# sbctl status
+# sbctl create-keys
+# sbctl enroll-keys -m
+# sbctl sign -s /boot/vmlinuz-linux
+# sbctl sign -s /boot/EFI/GRUB/grubx64.efi
+```
+
+### Fix world-accessible /boot warning
+
+Add `fmask=0077,dmask=0077` to the `/boot` line in `/etc/fstab` (see Issues below).
+
+----
 
 Type ``exit`` to exit chroot
 
 ``# umount -R /mnt/`` to unmount all volumes
 
 Now its time to reboot into the new system
+
+## LUKS + TPM2 auto-unlock (optional)
+
+Only if the machine has a TPM2 chip (check with `# systemd-cryptenroll --tpm2-device=list`) and LUKS was set up above:
+
+```
+# systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+2+7 /dev/sda2
+```
+
+Then add `rd.luks.options=tpm2-device=auto` to the kernel `options` line (systemd-boot) or re-run `grub-mkconfig` (GRUB) so the initramfs unlocks automatically without a password prompt.
 
 ## Create New User
 ```
