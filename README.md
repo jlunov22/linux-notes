@@ -7,6 +7,7 @@ Personal notes and journal for Linux setup, fixes, and issues encountered along 
 - [fcitx5 install notes](fcitx5-install-note.md)
 - [Arknights on Linux](Game/Arknights-On-Linux.md)
 - [KVM — Bliss14 setup](kvm/bliss14/README.MD)
+- [Arch Linux install cheat sheet](arch-install/INSTALL.md) ([troubleshooting](arch-install/TROUBLESHOOTING.md))
 
 ## Journal
 
